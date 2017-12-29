@@ -1,0 +1,15 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+
+mainClassName = 'main.java.com.vavrinchuk.carShopSystem.Main'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compile('org.web3j:core:3.2.0')
+	compile('org.web3j:crypto:3.2.0')
+	compile('org.web3j:codegen:3.2.0')
+}
