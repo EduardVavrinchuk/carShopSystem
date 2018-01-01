@@ -1,0 +1,155 @@
+pragma solidity 0.4.19;
+
+import "../common/Mortal.sol";
+import "../storage/CarStorage.sol";
+import "../libraries/SafeMath.sol";
+import "./ICarController.sol";
+
+    /**
+    * @title Contract that allow customers to buy and rent cars.
+    *
+    * @dev This contract stores data in the storage and allows customers to buy and
+    *  rent cars. This is also a part of pattern that allows to upgrade the system.
+    *  This contract only manipulates the data that stored in the storage so it can
+    *  be replaced by a new better contract without losing data.
+     */
+contract CarController is Mortal, ICarController {
+
+    using SafeMath for uint;
+
+    event LogChangeCarStorage(address oldCarStorage, address newCarStorage);
+    event LogBuyCar(address indexed _by, uint _id, uint _price);
+    event LogRentCar(address indexed _by, uint _id, uint _price, uint _term);
+    event LogCarReturn(address indexed _by, uint _id, uint _time);
+
+    // address of the contract storage
+    CarStorage carStorage;
+
+    modifier carShouldExists(uint id) {
+        require(carStorage.getSize() >= id.add(1));
+        _;
+    }
+
+    modifier carShouldBeAvailable(uint id) {
+        require(carStorage.getStatus(id) != 0 || carStorage.getStatus(id) != 1);
+        _;
+    }
+
+    modifier carShouldBeUnavailable(uint id) {
+        require(carStorage.getStatus(id) == 0 || carStorage.getStatus(id) == 1);
+        _;
+    }
+
+    function CarController(CarStorage _carStorage) public {
+        require(address(_carStorage) != 0x0);
+        carStorage = _carStorage;
+        owner = msg.sender;
+    }
+
+    /**
+    * Change the address of the storage contract.
+    *
+    * @param _carStorage - address of the storage contract
+    *
+    * @return 'true' if operation was success
+    */
+    function changeCarStorage(CarStorage _carStorage)
+        onlyByOwner public returns (bool)
+    {
+        require(address(_carStorage) != 0x0);
+        LogChangeCarStorage(carStorage, _carStorage);
+        carStorage = _carStorage;
+        return true;
+    }
+
+    /**
+    * Allows buying car by customer
+    *
+    * @param id - the ID of chosen car
+    *
+    * @return 'true' if buying was success, 'false' otherwise
+    */
+    function buyCar(uint id)
+        carShouldExists(id) carShouldBeAvailable(id)
+        external payable returns (bool)
+        {
+            uint carPrice = carStorage.getPrice(id);
+    
+            // if buyer sent less money than necessary - finish transaction
+            // continue a transaction if money more/equal necessary sum
+            if(msg.value >= carPrice) {
+                LogBuyCar(msg.sender, id, carPrice);
+                carStorage.updateCarStatus(id, 1);
+    
+                // if the client sent more money than necessary - return the rest
+                uint amount = msg.value.sub(carPrice);
+                msg.sender.transfer(amount);
+    
+                return true;
+            } else {
+                // if money not enoght - return money and cancel the transaction
+                msg.sender.transfer(msg.value);
+                return false;
+        }
+    }
+
+    /**
+    * Allows rent the car
+    *
+    * @param id - the ID of chosen car
+    * @param term - the period of the rent in seconds
+    *
+    * @return 'true' if car was rented, 'false' otherwise
+    */
+    function rentCar(uint id, uint term)
+        carShouldExists(id) carShouldBeAvailable(id)
+        external payable returns (bool)
+    {
+        require(carStorage.getIsRentable(id));
+        uint termInDays = (term.div(86400)).add(1);
+
+        uint payment = (carStorage.getPrice(id).div(100)).mul(termInDays);
+        if(msg.value >= payment) {
+            LogRentCar(msg.sender, id, payment, termInDays);
+            carStorage.updateCarStatus(id, 0);
+            carStorage.setLastRentDay(id, term);
+
+            // if the client sent more money than necessary - return the rest
+            uint amount = msg.value.sub(payment);
+            msg.sender.transfer(amount);
+
+            return true;
+        } else {
+            // if money not enough - return money and cancel the transaction
+            msg.sender.transfer(msg.value);
+            return false;
+        }
+    }
+
+    /**
+    * Allows to return the car
+    *
+    * @param id - the ID of the car
+    *
+    * @return 'true' if car was returned
+    */
+    function returnCar(uint id, bool isEarlyReturn)
+        carShouldExists(id) carShouldBeUnavailable(id)
+        external returns (bool)
+    {
+        if(isEarlyReturn) {
+            carStorage.updateCarStatus(id, 3);
+        } else {
+            carStorage.updateCarStatus(id, 2);
+        }
+    }
+
+    /**
+    * Contract cannot store money or execute another functions throught fallback
+    * function.
+    */
+    function() public {
+        revert();
+    }
+
+}
