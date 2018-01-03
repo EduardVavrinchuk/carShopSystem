@@ -1,4 +1,4 @@
-pragma solidity 0.4.19;
+pragma solidity 0.4.18;
 
 import "./ICarStorage.sol";
 import "../common/Mortal.sol";
@@ -21,6 +21,12 @@ contract CarStorage is Mortal, ICarSolidity{
         CarStatus status;
         uint lastRentDay; // used only for rent period
     }
+    
+    // map of the customers that can withdraw money
+	mapping (address => uint) public pendingWithdrawals;
+
+	// map of the customers that should pay their debt
+	mapping (address => uint) public debtors;
     
     Car[] public cars;
     
@@ -57,7 +63,7 @@ contract CarStorage is Mortal, ICarSolidity{
     * @return 'true' if car was updated
     */
     function updateCarStatus(uint id, uint8 _status)
-        onlyByOwner public returns (bool)
+        public returns (bool)
     {
         cars[id].status = CarStatus(_status);
         return true;
@@ -82,19 +88,32 @@ contract CarStorage is Mortal, ICarSolidity{
         return cars[id].isRentable;
     }
 
-    /**
-    * Set the last day of car rent, used only for rent
-    */
-    function setLastRentDay(uint id, uint term) public returns (bool) {
-        cars[id].lastRentDay = uint(now) + term;
-    }
+    function getLastRentDay(uint id) public view returns (uint) {
+        return cars[id].lastRentDay;
+	}
 
-    /**
-    * Contract cannot store money or execute another functions
-    * (At least throught fallback function).
-    */
-    function() public {
-        revert();
+    function setLastRentDay(uint id, uint term) public {
+    	cars[id].lastRentDay = uint(now) + term;
     }
+    
+    function getPendingWithdrawals(address _sender) public view returns (uint) {
+       return pendingWithdrawals[_sender];
+   }
+
+    function setPendingWithdrawals(address _sender, uint _sum) public {
+       pendingWithdrawals[_sender] = _sum;
+   }
+
+   function getDebtor(address _sender) public view returns (uint) {
+       return debtors[_sender];
+   }
+ 
+   function setDebtor(address _sender, uint amount) public {
+       debtors[_sender] = amount;
+   }
+
+   function() public payable{
+       revert();
+   }
     
 }
