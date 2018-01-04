@@ -6,7 +6,7 @@ interface ICarController {
 
   function buyCar(uint id) external payable returns (bool);
 
-  function changeCarStorage(ICarStorge _carStorage) public returns (bool);
+  function changeCarStorage(ICarStorage _carStorage) public returns (bool);
   
   function rentCar(uint id, uint term) external payable returns (bool);
   

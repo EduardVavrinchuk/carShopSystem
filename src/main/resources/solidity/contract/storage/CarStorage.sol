@@ -3,7 +3,7 @@ pragma solidity 0.4.18;
 import "./ICarStorage.sol";
 import "../common/Mortal.sol";
 
-contract CarStorage is Mortal, ICarSolidity{
+contract CarStorage is Mortal, ICarStorage{
     
     enum CarStatus {
         RENTED,   // customer rent the car
