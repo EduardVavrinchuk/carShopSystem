@@ -18,7 +18,7 @@ import org.web3j.tx.TransactionManager;
  * <p>Generated with web3j version 3.2.0.
  */
 public class SafeMath extends Contract {
-    private static final String BINARY = "0x60606040523415600e57600080fd5b603580601b6000396000f3006060604052600080fd00a165627a7a72305820548aeeabb759d95646e39652eafd121b3d5ecb7e54b57999a5fd00092430a96d0029";
+    private static final String BINARY = "0x60606040523415600e57600080fd5b603580601b6000396000f3006060604052600080fd00a165627a7a723058200dfa513f0c7b8e4b8a3960518ad3e20ede73777634d358b6a885c48d912ab39e0029";
 
     protected static final HashMap<String, String> _addresses;
 

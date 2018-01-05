@@ -1,6 +1,6 @@
 pragma solidity 0.4.18;
 
-import "../storage/CarStorage.sol";
+import "../storage/ICarStorage.sol";
 
 interface ICarController {
 

@@ -56,7 +56,7 @@ public class carStorageTest {
 	}
 	
 	@AfterClass
-	public static void destroyTestRpc() {
+	public static void shutDownTestrpc() {
 		testrpc.destroyForcibly();
 	}
 	
@@ -121,7 +121,7 @@ public class carStorageTest {
 	}
 	
 	@Test
-	public void testAddBook() throws Exception {		
+	public void testAddCar() throws Exception {		
 		Tuple6<Utf8String, Utf8String, Bool, Uint256, Uint8, Uint256> firstCar = carStorage.cars(new Uint256(0)).send();
 		Tuple6<Utf8String, Utf8String, Bool, Uint256, Uint8, Uint256> secondCar = carStorage.cars(new Uint256(1)).send();
 		
@@ -174,7 +174,7 @@ public class carStorageTest {
 	@Test
 	public void testGetSize() throws Exception {
 		Uint256 sizeOfArray = carStorage.getSize().send();
-		assertThat(sizeOfArray.getValue().longValue()).as("Should have correct number of books").isEqualTo(NUMBER_OF_CARS);
+		assertThat(sizeOfArray.getValue().longValue()).as("Should have correct number of cars").isEqualTo(NUMBER_OF_CARS);
 	}
 	
 	@Test
