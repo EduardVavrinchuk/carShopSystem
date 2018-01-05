@@ -28,7 +28,7 @@ pragma solidity 0.4.18;
    *
    * @param newOwner - address of new owner
    *
-   * @returns 'true' if change was successful
+   * @return 'true' if change was successful
    */
   function changeOwner(address newOwner)
     onlyByOwner

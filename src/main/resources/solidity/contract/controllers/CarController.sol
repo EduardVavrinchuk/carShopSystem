@@ -114,7 +114,11 @@ contract CarController is Mortal, ICarController {
     */
     function rentCar(uint id, uint term)
         senderShouldNotBeDebtor carShouldExists(id) carShouldBeAvailable(id)
-        external payable returns (bool){
+        external payable returns (bool)
+     {
+     require(carStorage.getIsRentable(id));
+	 uint termInDays = (term.div(86400)).add(1);
+	 
      assert(termInDays >= 1);
 
      uint payment = (carStorage.getPrice(id).div(150)).mul(termInDays);
