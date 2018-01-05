@@ -9,8 +9,7 @@ public class Main {
 	}
 	
 	public static String greeting() {
-		return 
-				"Car Shop";
+		return "Car Shop";
 	}
 	
 	public static void generate() {
