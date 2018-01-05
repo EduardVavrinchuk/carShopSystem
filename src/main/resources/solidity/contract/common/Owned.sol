@@ -1,4 +1,4 @@
-pragma solidity 0.4.19;
+pragma solidity 0.4.18;
 
  /**
  * @title Contract that checking whether sender is owner of the contract.

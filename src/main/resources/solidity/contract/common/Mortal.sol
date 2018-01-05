@@ -1,6 +1,6 @@
-pragma solidity 0.4.19;
+pragma solidity 0.4.18;
 
-import "../common/Owned.sol";
+import "./Owned.sol";
 
 /**
  * @title This contract allow owner to destroy contract.
