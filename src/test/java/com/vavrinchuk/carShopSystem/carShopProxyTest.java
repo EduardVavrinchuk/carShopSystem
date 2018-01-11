@@ -45,7 +45,6 @@ public class carShopProxyTest {
 		testrpc.destroyForcibly();
 	}
 	
-	
 	@Before
 	public void setUp() throws Exception {
 		web3j = Web3j.build(new HttpService());
@@ -105,7 +104,7 @@ public class carShopProxyTest {
 		proxy.changeOwner(new Address(credentials.getAddress())).send();
 	}
 	
-	@Test(expected=NullPointerException.class)
+	@Test(expected=ArrayIndexOutOfBoundsException.class)
 	public void testKill() throws Exception {
 		proxy.kill().send();
 		

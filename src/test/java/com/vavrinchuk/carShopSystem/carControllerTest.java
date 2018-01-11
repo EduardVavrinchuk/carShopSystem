@@ -40,7 +40,7 @@ public class carControllerTest {
 	private static final byte RETURNED_CAR_STATUS = 2;
 	private static final byte EARLY_RETURN_CAR_STATUS = 3;
 	private static final long RENT_PERIOD = 1209600;
-	private static final long LOW_RENT_PERIOD = 864000;
+	private static final long LOW_RENT_PERIOD = 10;
 	private static final long RENT_AMOUNT = 1000;
 	private static final long DEBT_AMOUNT = 5;
 	private static final long LEFT_AMOUNT = 0;
@@ -110,7 +110,7 @@ public class carControllerTest {
 		carController.changeOwner(new Address(credentials.getAddress())).send();
 	}
 	
-	@Test(expected=NullPointerException.class)
+	@Test(expected=ArrayIndexOutOfBoundsException.class)
 	public void testKill() throws Exception {
 		carController.kill().send();
 		
@@ -241,7 +241,7 @@ public class carControllerTest {
 	public void testRentCarIsNotExistsException() throws Exception {
 		carController.rentCar(
 				new Uint256(NON_EXISTING_CAR_INDEX), 
-				new Uint256(RENT_PERIOD), 
+				new Uint256(LOW_RENT_PERIOD), 
 				BigInteger.valueOf(RENT_AMOUNT)
 			).send();
 	}
@@ -269,14 +269,7 @@ public class carControllerTest {
 			).send();
 	}
 	
-	@Test(expected=RuntimeException.class)
-	public void testRentCarLowRentPeriodException() throws Exception {
-		carController.rentCar(
-				new Uint256(CAR_INDEX_1), 
-				new Uint256(LOW_RENT_PERIOD), 
-				BigInteger.valueOf(RENT_AMOUNT)
-			).send();
-	}
+
 	
 	@Test
 	public void testCarEarlyReturn() throws Exception {
